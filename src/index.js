@@ -1,6 +1,6 @@
 import TargetEventHandlers from './TargetEventHandlers';
 
-const EVENT_HANDLERS_KEY = '__react_waypoint_event_handlers__';
+const EVENT_HANDLERS_KEY = '__consolidated_events_handlers__';
 
 export function addEventListener(target, eventName, listener) {
   if (!target[EVENT_HANDLERS_KEY]) {
