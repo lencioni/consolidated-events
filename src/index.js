@@ -1,1 +1,116 @@
+const CAN_USE_DOM = !!(
+  (typeof window !== 'undefined' &&
+  window.document && window.document.createElement)
+);
+
+// Adapted from Modernizr
+// https://github.com/Modernizr/Modernizr/blob/5eea7e2a/feature-detects/dom/passiveeventlisteners.js#L26-L35
+function canUsePassiveEventListener() {
+  if (!CAN_USE_DOM) {
+    return false;
+  }
+
+  let supportsPassiveOption = false;
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get() {
+        supportsPassiveOption = true;
+      }
+    });
+    window.addEventListener('test', null, opts);
+  } catch (e) {
+    // do nothing
+  }
+
+  return supportsPassiveOption;
+}
+const EVENT_OPTIONS = canUsePassiveEventListener() ? { passive: true } : undefined;
+
+class TargetEventHandlers {
+  constructor(target) {
+    this.target = target;
+    this.events = {};
+  }
+
+  getEventHandlers(eventName) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = {
+        size: 0,
+        index: 0,
+        handlers: {},
+        handleEvent: undefined,
+      };
+    }
+    return this.events[eventName];
+  }
+
+  handleEvent(eventName, event) {
+    const { handlers } = this.getEventHandlers(eventName);
+    Object.keys(handlers).forEach(function(index) {
+      const handler = handlers[index];
+      if (handler) {
+        // We need to check for presence here because a handler function may
+        // cause later handlers to get removed. This can happen if you for
+        // instance have a waypoint that unmounts another waypoint as part of an
+        // onEnter/onLeave handler.
+        handler(event);
+      }
+    });
+  }
+
+  add(eventName, listener) {
+    const eventHandlers = this.getEventHandlers(eventName);
+
+    if (eventHandlers.size === 0) {
+      eventHandlers.handleEvent = this.handleEvent.bind(this, eventName);
+
+      this.target.addEventListener(
+        eventName,
+        eventHandlers.handleEvent,
+        EVENT_OPTIONS
+      );
+    }
+
+    eventHandlers.size++;
+    eventHandlers.index++;
+    eventHandlers.handlers[eventHandlers.index] = listener;
+    return eventHandlers.index;
+  }
+
+  delete(eventName, index) {
+    const eventHandlers = this.getEventHandlers(eventName);
+    delete eventHandlers.handlers[index];
+    eventHandlers.size--;
+
+    if (eventHandlers.size === 0) {
+      this.target.removeEventListener(
+        eventName,
+        eventHandlers.handleEvent,
+        EVENT_OPTIONS
+      );
+
+      eventHandlers.handleEvent = undefined;
+    }
+  }
+}
+
+const EVENT_HANDLERS_KEY = '__react_waypoint_event_handlers__';
+
+function addEventListener(target, eventName, listener) {
+  if (!target[EVENT_HANDLERS_KEY]) {
+    target[EVENT_HANDLERS_KEY] = new TargetEventHandlers(target);
+  }
+  return target[EVENT_HANDLERS_KEY].add(eventName, listener);
+}
+
+function removeEventListener(target, eventName, index) {
+  if (target) {
+    // At the time of unmounting, the target might no longer exist. Guarding
+    // against this prevents the following error:
+    //
+    //   Cannot read property 'removeEventListener' of undefined
+    target[EVENT_HANDLERS_KEY].delete(eventName, index);
+  }
+}
+
 export default {};
