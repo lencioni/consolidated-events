@@ -1,6 +1,4 @@
-import canUsePassiveEventListeners from './canUsePassiveEventListeners';
-
-const EVENT_OPTIONS = canUsePassiveEventListeners ? { passive: true } : undefined;
+import eventOptionsKey from './eventOptionsKey';
 
 export default class TargetEventHandlers {
   constructor(target) {
@@ -8,9 +6,11 @@ export default class TargetEventHandlers {
     this.events = {};
   }
 
-  getEventHandlers(eventName) {
-    if (!this.events[eventName]) {
-      this.events[eventName] = {
+  getEventHandlers(eventName, options) {
+    const key = `${eventName} ${eventOptionsKey(options)}`;
+
+    if (!this.events[key]) {
+      this.events[key] = {
         size: 0,
         index: 0,
         handlers: {},
@@ -34,8 +34,9 @@ export default class TargetEventHandlers {
     });
   }
 
-  add(eventName, listener) {
-    const eventHandlers = this.getEventHandlers(eventName);
+  add(eventName, listener, options) {
+    // options has already been normalized at this point.
+    const eventHandlers = this.getEventHandlers(eventName, options);
 
     if (eventHandlers.size === 0) {
       eventHandlers.handleEvent = this.handleEvent.bind(this, eventName);
@@ -43,7 +44,7 @@ export default class TargetEventHandlers {
       this.target.addEventListener(
         eventName,
         eventHandlers.handleEvent,
-        EVENT_OPTIONS
+        options
       );
     }
 
@@ -53,8 +54,9 @@ export default class TargetEventHandlers {
     return eventHandlers.index;
   }
 
-  delete(eventName, index) {
-    const eventHandlers = this.getEventHandlers(eventName);
+  delete(eventName, index, options) {
+    // options has already been normalized at this point.
+    const eventHandlers = this.getEventHandlers(eventName, options);
     delete eventHandlers.handlers[index];
     eventHandlers.size -= 1;
 
@@ -62,11 +64,10 @@ export default class TargetEventHandlers {
       this.target.removeEventListener(
         eventName,
         eventHandlers.handleEvent,
-        EVENT_OPTIONS
+        options
       );
 
       eventHandlers.handleEvent = undefined;
     }
   }
 }
-
