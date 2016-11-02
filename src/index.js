@@ -19,5 +19,3 @@ export function removeEventListener(target, eventName, index) {
     target[EVENT_HANDLERS_KEY].delete(eventName, index);
   }
 }
-
-export default {};
