@@ -15,7 +15,7 @@ function canUsePassiveEventListener() {
     const opts = Object.defineProperty({}, 'passive', {
       get() {
         supportsPassiveOption = true;
-      }
+      },
     });
     window.addEventListener('test', null, opts);
   } catch (e) {
@@ -46,7 +46,7 @@ class TargetEventHandlers {
 
   handleEvent(eventName, event) {
     const { handlers } = this.getEventHandlers(eventName);
-    Object.keys(handlers).forEach(function(index) {
+    Object.keys(handlers).forEach((index) => {
       const handler = handlers[index];
       if (handler) {
         // We need to check for presence here because a handler function may
@@ -71,8 +71,8 @@ class TargetEventHandlers {
       );
     }
 
-    eventHandlers.size++;
-    eventHandlers.index++;
+    eventHandlers.size += 1;
+    eventHandlers.index += 1;
     eventHandlers.handlers[eventHandlers.index] = listener;
     return eventHandlers.index;
   }
@@ -80,7 +80,7 @@ class TargetEventHandlers {
   delete(eventName, index) {
     const eventHandlers = this.getEventHandlers(eventName);
     delete eventHandlers.handlers[index];
-    eventHandlers.size--;
+    eventHandlers.size -= 1;
 
     if (eventHandlers.size === 0) {
       this.target.removeEventListener(
@@ -96,14 +96,15 @@ class TargetEventHandlers {
 
 const EVENT_HANDLERS_KEY = '__react_waypoint_event_handlers__';
 
-function addEventListener(target, eventName, listener) {
+export function addEventListener(target, eventName, listener) {
   if (!target[EVENT_HANDLERS_KEY]) {
+    // eslint-disable-next-line no-param-reassign
     target[EVENT_HANDLERS_KEY] = new TargetEventHandlers(target);
   }
   return target[EVENT_HANDLERS_KEY].add(eventName, listener);
 }
 
-function removeEventListener(target, eventName, index) {
+export function removeEventListener(target, eventName, index) {
   if (target) {
     // At the time of unmounting, the target might no longer exist. Guarding
     // against this prevents the following error:
