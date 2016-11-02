@@ -11,11 +11,12 @@ export function addEventListener(target, eventName, listener) {
 }
 
 export function removeEventListener(target, eventName, index) {
+  // There can be a race condition where the target may no longer exist when
+  // this function is called, e.g. when a React component is unmounting.
+  // Guarding against this prevents the following error:
+  //
+  //   Cannot read property 'removeEventListener' of undefined
   if (target) {
-    // At the time of unmounting, the target might no longer exist. Guarding
-    // against this prevents the following error:
-    //
-    //   Cannot read property 'removeEventListener' of undefined
     target[EVENT_HANDLERS_KEY].delete(eventName, index);
   }
 }
