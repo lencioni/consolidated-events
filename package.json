@@ -2,8 +2,11 @@
   "name": "consolidated-events",
   "version": "0.0.0",
   "description": "Manage multiple event handlers using few event listeners",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "build": "npm run clean && npm run build:js",
+    "build:js": "babel src/ -d lib/",
+    "clean": "rimraf lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +22,11 @@
   "bugs": {
     "url": "https://github.com/lencioni/consolidated-events/issues"
   },
-  "homepage": "https://github.com/lencioni/consolidated-events#readme"
+  "homepage": "https://github.com/lencioni/consolidated-events#readme",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-preset-airbnb": "^2.1.1",
+    "rimraf": "^2.5.4"
+  }
 }
