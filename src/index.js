@@ -1,30 +1,6 @@
-const CAN_USE_DOM = !!(
-  (typeof window !== 'undefined' &&
-  window.document && window.document.createElement)
-);
+import canUsePassiveEventListeners from './canUsePassiveEventListeners';
 
-// Adapted from Modernizr
-// https://github.com/Modernizr/Modernizr/blob/5eea7e2a/feature-detects/dom/passiveeventlisteners.js#L26-L35
-function canUsePassiveEventListener() {
-  if (!CAN_USE_DOM) {
-    return false;
-  }
-
-  let supportsPassiveOption = false;
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get() {
-        supportsPassiveOption = true;
-      },
-    });
-    window.addEventListener('test', null, opts);
-  } catch (e) {
-    // do nothing
-  }
-
-  return supportsPassiveOption;
-}
-const EVENT_OPTIONS = canUsePassiveEventListener() ? { passive: true } : undefined;
+const EVENT_OPTIONS = canUsePassiveEventListeners ? { passive: true } : undefined;
 
 class TargetEventHandlers {
   constructor(target) {
