@@ -9,7 +9,9 @@
     "clean": "rimraf lib",
     "lint": "eslint .",
     "pretest": "npm run --silent lint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run --silent test:js",
+    "test:js": "jest",
+    "test:js:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,7 @@
     "eslint": "^3.9.1",
     "eslint-config-airbnb-base": "^9.0.0",
     "eslint-plugin-import": "^2.0.1",
+    "jest": "^16.0.2",
     "rimraf": "^2.5.4"
   }
 }

@@ -11,7 +11,7 @@ export default function eventOptionsKey(normalizedEventOptions) {
   // If the browser does not support passive event listeners, the normalized
   // event options will be a boolean.
   if (normalizedEventOptions === true) {
-    return 1;
+    return 100;
   }
 
   // At this point, the browser supports passive event listeners, so we expect
@@ -25,6 +25,6 @@ export default function eventOptionsKey(normalizedEventOptions) {
   const capture = normalizedEventOptions.capture << 0;
   const passive = normalizedEventOptions.passive << 1;
   const once = normalizedEventOptions.once << 2;
-  return 2 + capture + passive + once;
+  return capture + passive + once;
 }
 
