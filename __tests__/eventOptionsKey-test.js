@@ -1,35 +1,43 @@
 import eventOptionsKey from '../src/eventOptionsKey';
 
 it('treats undefined and false the same', () => {
-  expect(eventOptionsKey(undefined)).toBe(eventOptionsKey(false));
+  expect(eventOptionsKey(undefined))
+    .toBe(eventOptionsKey(false));
 });
 
 it('treats false and empty objects the same', () => {
-  expect(eventOptionsKey(false)).toBe(eventOptionsKey({}));
+  expect(eventOptionsKey(false))
+    .toBe(eventOptionsKey({}));
 });
 
 it('treats empty objects and true differently', () => {
-  expect(eventOptionsKey({})).not.toBe(eventOptionsKey(true));
+  expect(eventOptionsKey({}))
+    .not.toBe(eventOptionsKey(true));
 });
 
 it('treats empty objects and a good option differently', () => {
-  expect(eventOptionsKey({})).not.toBe(eventOptionsKey({ capture: true }));
+  expect(eventOptionsKey({}))
+    .not.toBe(eventOptionsKey({ capture: true }));
 });
 
 it('treats true and a good option differently', () => {
-  expect(eventOptionsKey(true)).not.toBe(eventOptionsKey({ capture: true }));
+  expect(eventOptionsKey(true))
+    .not.toBe(eventOptionsKey({ capture: true }));
 });
 
 it('treats capture and passive differently', () => {
-  expect(eventOptionsKey({ capture: true })).not.toBe(eventOptionsKey({ passive: true }));
+  expect(eventOptionsKey({ capture: true }))
+    .not.toBe(eventOptionsKey({ passive: true }));
 });
 
 it('treats capture and only differently', () => {
-  expect(eventOptionsKey({ capture: true })).not.toBe(eventOptionsKey({ only: true }));
+  expect(eventOptionsKey({ capture: true }))
+    .not.toBe(eventOptionsKey({ only: true }));
 });
 
 it('treats passive and only differently', () => {
-  expect(eventOptionsKey({ passive: true })).not.toBe(eventOptionsKey({ only: true }));
+  expect(eventOptionsKey({ passive: true }))
+    .not.toBe(eventOptionsKey({ only: true }));
 });
 
 it('treats capture/passive differently from capture', () => {
