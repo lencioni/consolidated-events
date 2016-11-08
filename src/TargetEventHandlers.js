@@ -57,8 +57,11 @@ export default class TargetEventHandlers {
   delete(eventName, index, options) {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
-    delete eventHandlers.handlers[index];
-    eventHandlers.size -= 1;
+
+    if (eventHandlers.handlers[index]) {
+      delete eventHandlers.handlers[index];
+      eventHandlers.size -= 1;
+    }
 
     if (eventHandlers.size === 0) {
       this.target.removeEventListener(

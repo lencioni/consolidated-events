@@ -84,6 +84,15 @@ describe('#delete()', () => {
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), undefined);
   });
 
+  it('does not delete the listener when removing an unknown handler', () => {
+    const target = new MockTarget();
+    const eventHandlers = new TargetEventHandlers(target);
+    eventHandlers.add('scroll', () => {});
+    eventHandlers.delete('scroll', 'foo');
+
+    expect(target.removeEventListener).toHaveBeenCalledTimes(0);
+  });
+
   it('does not delete the event listener when there are more handlers left', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
