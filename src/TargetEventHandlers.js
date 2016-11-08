@@ -44,7 +44,7 @@ export default class TargetEventHandlers {
       this.target.addEventListener(
         eventName,
         eventHandlers.handleEvent,
-        options
+        options,
       );
     }
 
@@ -78,7 +78,7 @@ export default class TargetEventHandlers {
       this.target.removeEventListener(
         eventName,
         eventHandlers.handleEvent,
-        options
+        options,
       );
 
       eventHandlers.handleEvent = undefined;
