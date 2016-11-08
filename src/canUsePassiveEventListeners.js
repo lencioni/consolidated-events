@@ -2,7 +2,7 @@ import canUseDOM from './canUseDOM';
 
 // Adapted from Modernizr
 // https://github.com/Modernizr/Modernizr/blob/5eea7e2a/feature-detects/dom/passiveeventlisteners.js#L26-L35
-function canUsePassiveEventListeners() {
+function testPassiveEventListeners() {
   if (!canUseDOM) {
     return false;
   }
@@ -22,4 +22,11 @@ function canUsePassiveEventListeners() {
   return supportsPassiveOption;
 }
 
-export default canUsePassiveEventListeners();
+let memoized;
+
+export default function canUsePassiveEventListeners() {
+  if (memoized === undefined) {
+    memoized = testPassiveEventListeners();
+  }
+  return memoized;
+}

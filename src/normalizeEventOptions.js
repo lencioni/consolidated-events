@@ -5,7 +5,7 @@ export default function normalizeEventOptions(eventOptions) {
     return undefined;
   }
 
-  if (!canUsePassiveEventListeners) {
+  if (!canUsePassiveEventListeners()) {
     // If the browser does not support the passive option, then it is expecting
     // a boolean for the options argument to specify whether it should use
     // capture or not. In more modern browsers, this is passed via the `capture`
