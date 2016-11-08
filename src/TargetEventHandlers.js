@@ -17,7 +17,7 @@ export default class TargetEventHandlers {
         handleEvent: undefined,
       };
     }
-    return this.events[eventName];
+    return this.events[key];
   }
 
   handleEvent(eventName, event) {
