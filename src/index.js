@@ -1,7 +1,8 @@
 import normalizeEventOptions from './normalizeEventOptions';
 import TargetEventHandlers from './TargetEventHandlers';
 
-const EVENT_HANDLERS_KEY = '__consolidated_events_handlers__';
+// Export to make testing possible.
+export const EVENT_HANDLERS_KEY = '__consolidated_events_handlers__';
 
 export function addEventListener(target, eventName, listener, options) {
   if (!target[EVENT_HANDLERS_KEY]) {
@@ -9,7 +10,7 @@ export function addEventListener(target, eventName, listener, options) {
     target[EVENT_HANDLERS_KEY] = new TargetEventHandlers(target);
   }
   const normalizedEventOptions = normalizeEventOptions(options);
-  return target[EVENT_HANDLERS_KEY].add(eventName, normalizedEventOptions, listener);
+  return target[EVENT_HANDLERS_KEY].add(eventName, listener, normalizedEventOptions);
 }
 
 export function removeEventListener(target, eventName, index, options) {

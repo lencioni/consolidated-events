@@ -58,6 +58,11 @@ export default class TargetEventHandlers {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
 
+    if (eventHandlers.size === 0) {
+      // There are no matching event handlers, so no work to be done here.
+      return;
+    }
+
     if (eventHandlers.handlers[index]) {
       delete eventHandlers.handlers[index];
       eventHandlers.size -= 1;
