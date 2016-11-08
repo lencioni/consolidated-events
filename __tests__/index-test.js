@@ -36,13 +36,14 @@ describe('addEventListener()', () => {
 
 describe('removeEventListener()', () => {
   it('does not throw when target is undefined', () => {
-    expect(() => removeEventListener(undefined, 'scroll', 1)).not.toThrow();
+    const handle = { target: undefined };
+    expect(() => removeEventListener(handle)).not.toThrow();
   });
 
   it('removes event listeners that were previously registered', () => {
     const target = new MockTarget();
     const handle = addEventListener(target, 'scroll', () => {});
-    removeEventListener(target, 'scroll', handle);
+    removeEventListener(handle);
 
     expect(target.removeEventListener)
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), undefined);
@@ -51,8 +52,8 @@ describe('removeEventListener()', () => {
   it('ignores event listeners it does not know about', () => {
     const target = new MockTarget();
     addEventListener(target, 'scroll', () => {});
-    removeEventListener(target, 'scroll', 'foo');
-    removeEventListener(target, 'resize', 'foo');
+    removeEventListener({ target, eventName: 'scroll', index: 'foo' });
+    removeEventListener({ target, eventName: 'resize', index: 'foo' });
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(0);
   });
@@ -60,7 +61,7 @@ describe('removeEventListener()', () => {
   it('normalizes event options', () => {
     const target = new MockTarget();
     const handle = addEventListener(target, 'scroll', () => {}, { capture: true });
-    removeEventListener(target, 'scroll', handle, { capture: true });
+    removeEventListener(handle);
 
     expect(target.removeEventListener)
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), true);

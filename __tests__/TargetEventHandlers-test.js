@@ -77,7 +77,7 @@ describe('#delete()', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
     const handle = eventHandlers.add('scroll', () => {});
-    eventHandlers.delete('scroll', handle);
+    eventHandlers.delete(handle);
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(1);
     expect(target.removeEventListener)
@@ -88,7 +88,7 @@ describe('#delete()', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
     eventHandlers.add('scroll', () => {});
-    eventHandlers.delete('scroll', 'foo');
+    eventHandlers.delete({ target: 'foo' });
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(0);
   });
@@ -98,7 +98,7 @@ describe('#delete()', () => {
     const eventHandlers = new TargetEventHandlers(target);
     const handle = eventHandlers.add('scroll', () => {});
     eventHandlers.add('scroll', () => {});
-    eventHandlers.delete('scroll', handle);
+    eventHandlers.delete(handle);
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(0);
   });
@@ -108,8 +108,8 @@ describe('#delete()', () => {
     const eventHandlers = new TargetEventHandlers(target);
     const handle = eventHandlers.add('scroll', () => {});
     const handle2 = eventHandlers.add('scroll', () => {});
-    eventHandlers.delete('scroll', handle);
-    eventHandlers.delete('scroll', handle2);
+    eventHandlers.delete(handle);
+    eventHandlers.delete(handle2);
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(1);
     expect(target.removeEventListener)
@@ -121,8 +121,8 @@ describe('#delete()', () => {
     const eventHandlers = new TargetEventHandlers(target);
     const handle = eventHandlers.add('scroll', () => {});
     const handle2 = eventHandlers.add('scroll', () => {}, { passive: true });
-    eventHandlers.delete('scroll', handle);
-    eventHandlers.delete('scroll', handle2, { passive: true });
+    eventHandlers.delete(handle);
+    eventHandlers.delete(handle2);
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(2);
     expect(target.removeEventListener)

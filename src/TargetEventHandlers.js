@@ -51,10 +51,16 @@ export default class TargetEventHandlers {
     eventHandlers.size += 1;
     eventHandlers.index += 1;
     eventHandlers.handlers[eventHandlers.index] = listener;
-    return eventHandlers.index;
+
+    return {
+      target: this.target,
+      eventName,
+      options,
+      index: eventHandlers.index,
+    };
   }
 
-  delete(eventName, index, options) {
+  delete({ eventName, index, options }) {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
 

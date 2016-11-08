@@ -16,7 +16,7 @@ Manage multiple event handlers using few event listeners.
 ```js
 import { addEventListener, removeEventListener } from 'consolidated-events';
 
-const listenerId = addEventListener(
+const handle = addEventListener(
   window,
   'scroll',
   () => { console.log('scrolling') },
@@ -25,7 +25,7 @@ const listenerId = addEventListener(
 
 ...
 
-removeEventListener(window, 'scroll', listenerId, { passive: true });
+removeEventListener(handle);
 ```
 
 [npm-version-svg]: http://versionbadg.es/lencioni/consolidated-events.svg
