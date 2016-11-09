@@ -20,8 +20,8 @@ export default class TargetEventHandlers {
     return this.events[key];
   }
 
-  handleEvent(eventName, event) {
-    const { handlers } = this.getEventHandlers(eventName);
+  handleEvent(eventName, options, event) {
+    const { handlers } = this.getEventHandlers(eventName, options);
     Object.keys(handlers).forEach((index) => {
       const handler = handlers[index];
       if (handler) {
@@ -39,7 +39,7 @@ export default class TargetEventHandlers {
     const eventHandlers = this.getEventHandlers(eventName, options);
 
     if (eventHandlers.size === 0) {
-      eventHandlers.handleEvent = this.handleEvent.bind(this, eventName);
+      eventHandlers.handleEvent = this.handleEvent.bind(this, eventName, options);
 
       this.target.addEventListener(
         eventName,

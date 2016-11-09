@@ -131,3 +131,37 @@ describe('#delete()', () => {
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), { passive: true });
   });
 });
+
+describe('#handleEvent', () => {
+  it('calls each handler', () => {
+    const target = new MockTarget();
+    const eventHandlers = new TargetEventHandlers(target);
+    const handlers = [jest.fn(), jest.fn(), jest.fn()];
+    handlers.forEach((handler) => {
+      eventHandlers.add('scroll', handler);
+    });
+    const event = {};
+    eventHandlers.handleEvent('scroll', undefined, event);
+
+    handlers.forEach((handler) => {
+      expect(handler).toHaveBeenCalledTimes(1);
+      expect(handler).toHaveBeenCalledWith(event);
+    });
+  });
+
+  it('calls each handler with options', () => {
+    const target = new MockTarget();
+    const eventHandlers = new TargetEventHandlers(target);
+    const handlers = [jest.fn(), jest.fn(), jest.fn()];
+    handlers.forEach((handler) => {
+      eventHandlers.add('scroll', handler, { passive: true });
+    });
+    const event = {};
+    eventHandlers.handleEvent('scroll', { passive: true }, event);
+
+    handlers.forEach((handler) => {
+      expect(handler).toHaveBeenCalledTimes(1);
+      expect(handler).toHaveBeenCalledWith(event);
+    });
+  });
+});
