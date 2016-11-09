@@ -1,6 +1,6 @@
 {
   "name": "consolidated-events",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Manage multiple event handlers using few event listeners",
   "main": "lib/index.js",
   "scripts": {
