@@ -7,6 +7,10 @@ function testPassiveEventListeners() {
     return false;
   }
 
+  if (!window.addEventListener || !window.removeEventListener || !Object.defineProperty) {
+    return false;
+  }
+
   let supportsPassiveOption = false;
   try {
     const opts = Object.defineProperty({}, 'passive', {
