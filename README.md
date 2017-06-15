@@ -14,9 +14,9 @@ Manage multiple event handlers using few event listeners.
 ## Example
 
 ```js
-import { addEventListener, removeEventListener } from 'consolidated-events';
+import { addEventListener } from 'consolidated-events';
 
-const handle = addEventListener(
+const removeEventListener = addEventListener(
   window,
   'scroll',
   () => { console.log('scrolling') },

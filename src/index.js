@@ -13,15 +13,7 @@ export function addEventListener(target, eventName, listener, options) {
   return target[EVENT_HANDLERS_KEY].add(eventName, listener, normalizedEventOptions);
 }
 
-export function removeEventListener(eventHandle) {
-  const { target } = eventHandle;
-
-  // There can be a race condition where the target may no longer exist when
-  // this function is called, e.g. when a React component is unmounting.
-  // Guarding against this prevents the following error:
-  //
-  //   Cannot read property 'removeEventListener' of undefined
-  if (target) {
-    target[EVENT_HANDLERS_KEY].delete(eventHandle);
-  }
+// Deprecated
+export function removeEventListener(unsubscribeFn) {
+  unsubscribeFn();
 }
