@@ -25,7 +25,7 @@ const removeEventListener = addEventListener(
 
 ...
 
-removeEventListener(handle);
+removeEventListener();
 ```
 
 [npm-version-svg]: http://versionbadg.es/lencioni/consolidated-events.svg
