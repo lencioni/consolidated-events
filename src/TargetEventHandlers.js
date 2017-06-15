@@ -11,19 +11,17 @@ export default class TargetEventHandlers {
 
     if (!this.events[key]) {
       this.events[key] = {
-        size: 0,
-        index: 0,
-        handlers: {},
+        handlers: [],
         handleEvent: undefined,
       };
     }
+
     return this.events[key];
   }
 
   handleEvent(eventName, options, event) {
     const { handlers } = this.getEventHandlers(eventName, options);
-    Object.keys(handlers).forEach((index) => {
-      const handler = handlers[index];
+    handlers.forEach((handler) => {
       if (handler) {
         // We need to check for presence here because a handler function may
         // cause later handlers to get removed. This can happen if you for
@@ -38,7 +36,7 @@ export default class TargetEventHandlers {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
 
-    if (eventHandlers.size === 0) {
+    if (eventHandlers.handlers.length === 0) {
       eventHandlers.handleEvent = this.handleEvent.bind(this, eventName, options);
 
       this.target.addEventListener(
@@ -48,40 +46,39 @@ export default class TargetEventHandlers {
       );
     }
 
-    eventHandlers.size += 1;
-    eventHandlers.index += 1;
-    eventHandlers.handlers[eventHandlers.index] = listener;
+    eventHandlers.handlers.push(listener);
 
-    return {
-      target: this.target,
-      eventName,
-      options,
-      index: eventHandlers.index,
+    let isSubscribed = true;
+    const unsubscribe = () => {
+      if (!isSubscribed) {
+        return;
+      }
+
+      isSubscribed = false;
+
+      const index = eventHandlers.handlers.indexOf(listener);
+      eventHandlers.handlers.splice(index, 1);
+
+      if (eventHandlers.handlers.length === 0) {
+        // All event handlers have been removed, so we want to remove the event
+        // listener from the target node.
+
+        if (this.target) {
+          // There can be a race condition where the target may no longer exist
+          // when this function is called, e.g. when a React component is
+          // unmounting. Guarding against this prevents the following error:
+          //
+          //   Cannot read property 'removeEventListener' of undefined
+          this.target.removeEventListener(
+            eventName,
+            eventHandlers.handleEvent,
+            options,
+          );
+        }
+
+        eventHandlers.handleEvent = undefined;
+      }
     };
-  }
-
-  delete({ eventName, index, options }) {
-    // options has already been normalized at this point.
-    const eventHandlers = this.getEventHandlers(eventName, options);
-
-    if (eventHandlers.size === 0) {
-      // There are no matching event handlers, so no work to be done here.
-      return;
-    }
-
-    if (eventHandlers.handlers[index]) {
-      delete eventHandlers.handlers[index];
-      eventHandlers.size -= 1;
-    }
-
-    if (eventHandlers.size === 0) {
-      this.target.removeEventListener(
-        eventName,
-        eventHandlers.handleEvent,
-        options,
-      );
-
-      eventHandlers.handleEvent = undefined;
-    }
+    return unsubscribe;
   }
 }

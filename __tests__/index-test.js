@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import { addEventListener, removeEventListener, EVENT_HANDLERS_KEY } from '../src';
 import TargetEventHandlers from '../src/TargetEventHandlers';
 
@@ -25,25 +24,19 @@ describe('addEventListener()', () => {
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), true);
   });
 
-  it('returns a handle', () => {
+  it('returns an unsubscribe function', () => {
     const target = new MockTarget();
-    const handle = addEventListener(target, 'scroll', () => {}, { capture: true });
+    const remove = addEventListener(target, 'scroll', () => {}, { capture: true });
 
-    expect(handle).not.toBe(null);
-    expect(handle).not.toBe(undefined);
+    expect(typeof remove).toBe('function');
   });
 });
 
 describe('removeEventListener()', () => {
-  it('does not throw when target is undefined', () => {
-    const handle = { target: undefined };
-    expect(() => removeEventListener(handle)).not.toThrow();
-  });
-
   it('removes event listeners that were previously registered', () => {
     const target = new MockTarget();
-    const handle = addEventListener(target, 'scroll', () => {});
-    removeEventListener(handle);
+    const unsubscribe = addEventListener(target, 'scroll', () => {});
+    removeEventListener(unsubscribe);
 
     expect(target.removeEventListener)
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), undefined);
@@ -52,16 +45,16 @@ describe('removeEventListener()', () => {
   it('ignores event listeners it does not know about', () => {
     const target = new MockTarget();
     addEventListener(target, 'scroll', () => {});
-    removeEventListener({ target, eventName: 'scroll', index: 'foo' });
-    removeEventListener({ target, eventName: 'resize', index: 'foo' });
+    removeEventListener(() => {});
+    removeEventListener(() => {});
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(0);
   });
 
   it('normalizes event options', () => {
     const target = new MockTarget();
-    const handle = addEventListener(target, 'scroll', () => {}, { capture: true });
-    removeEventListener(handle);
+    const unsubscribe = addEventListener(target, 'scroll', () => {}, { capture: true });
+    removeEventListener(unsubscribe);
 
     expect(target.removeEventListener)
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), true);

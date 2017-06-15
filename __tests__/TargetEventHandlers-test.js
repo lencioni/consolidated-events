@@ -8,15 +8,6 @@ class MockTarget {
 }
 
 describe('#add()', () => {
-  it('returns a handle', () => {
-    const target = new MockTarget();
-    const eventHandlers = new TargetEventHandlers(target);
-    const handle = eventHandlers.add('scroll', () => {});
-
-    expect(handle).not.toBe(null);
-    expect(handle).not.toBe(undefined);
-  });
-
   it('adds a single event listener to the target the first time', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
@@ -70,59 +61,76 @@ describe('#add()', () => {
     expect(target.addEventListener)
       .toHaveBeenCalledWith('resize', jasmine.any(Function), undefined);
   });
-});
 
-describe('#delete()', () => {
-  it('deletes the event listener when the only handler is removed', () => {
+  it('returns an unsubscribe function', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
-    const handle = eventHandlers.add('scroll', () => {});
-    eventHandlers.delete(handle);
+    const remove = eventHandlers.add('scroll', () => {});
+
+    expect(typeof remove).toBe('function');
+  });
+
+  it('unsubscribe deletes the event listener when the only handler is removed', () => {
+    const target = new MockTarget();
+    const eventHandlers = new TargetEventHandlers(target);
+    const remove = eventHandlers.add('scroll', () => {});
+    remove();
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(1);
     expect(target.removeEventListener)
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), undefined);
   });
 
-  it('does not delete the listener when removing an unknown handler', () => {
+  it('unsubscribe does not throw when called twice', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
+    const remove = eventHandlers.add('scroll', () => {});
+    remove();
+
+    expect(remove).not.toThrow();
+  });
+
+  it('unsubscribe does not delete the event listener when there are more handlers left', () => {
+    const target = new MockTarget();
+    const eventHandlers = new TargetEventHandlers(target);
+    const remove = eventHandlers.add('scroll', () => {});
     eventHandlers.add('scroll', () => {});
-    eventHandlers.delete({ target: 'foo' });
+    remove();
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(0);
   });
 
-  it('does not delete the event listener when there are more handlers left', () => {
+  it('unsubscribe called multiple times does not delete the event listener when there are more handlers left', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
-    const handle = eventHandlers.add('scroll', () => {});
+    const remove = eventHandlers.add('scroll', () => {});
     eventHandlers.add('scroll', () => {});
-    eventHandlers.delete(handle);
+    remove();
+    remove();
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(0);
   });
 
-  it('deletes the event listener when all handlers is removed', () => {
+  it('unsubscribe deletes the event listener when all handlers are removed', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
-    const handle = eventHandlers.add('scroll', () => {});
-    const handle2 = eventHandlers.add('scroll', () => {});
-    eventHandlers.delete(handle);
-    eventHandlers.delete(handle2);
+    const remove = eventHandlers.add('scroll', () => {});
+    const remove2 = eventHandlers.add('scroll', () => {});
+    remove();
+    remove2();
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(1);
     expect(target.removeEventListener)
       .toHaveBeenCalledWith('scroll', jasmine.any(Function), undefined);
   });
 
-  it('handles different options separately', () => {
+  it('unsubscribe handles different options separately', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
-    const handle = eventHandlers.add('scroll', () => {});
-    const handle2 = eventHandlers.add('scroll', () => {}, { passive: true });
-    eventHandlers.delete(handle);
-    eventHandlers.delete(handle2);
+    const remove = eventHandlers.add('scroll', () => {});
+    const remove2 = eventHandlers.add('scroll', () => {}, { passive: true });
+    remove();
+    remove2();
 
     expect(target.removeEventListener).toHaveBeenCalledTimes(2);
     expect(target.removeEventListener)
