@@ -157,6 +157,27 @@ describe('#handleEvent', () => {
     });
   });
 
+  it('calls each handler even when one is removed when called', () => {
+    const target = new MockTarget();
+    const eventHandlers = new TargetEventHandlers(target);
+
+    let remove;
+    const firstHandler = jest.fn(() => remove());
+    remove = eventHandlers.add('scroll', firstHandler);
+
+    const secondHandler = jest.fn();
+    eventHandlers.add('scroll', secondHandler);
+
+    const event = {};
+    eventHandlers.handleEvent('scroll', undefined, event);
+
+    expect(firstHandler).toHaveBeenCalledTimes(1);
+    expect(firstHandler).toHaveBeenCalledWith(event);
+
+    expect(secondHandler).toHaveBeenCalledTimes(1);
+    expect(secondHandler).toHaveBeenCalledWith(event);
+  });
+
   it('calls each handler with options', () => {
     const target = new MockTarget();
     const eventHandlers = new TargetEventHandlers(target);
