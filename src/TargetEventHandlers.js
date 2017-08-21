@@ -14,14 +14,23 @@ export default class TargetEventHandlers {
         handlers: [],
         handleEvent: undefined,
       };
+      this.events[key].nextHandlers = this.events[key].handlers;
     }
 
     return this.events[key];
   }
 
+  ensureCanMutateNextEventHandlers(eventName, options) {
+    const eventHandlers = this.getEventHandlers(eventName, options);
+    if (eventHandlers.handlers === eventHandlers.nextHandlers) {
+      eventHandlers.nextHandlers = eventHandlers.handlers.slice();
+    }
+  }
+
   handleEvent(eventName, options, event) {
-    const { handlers } = this.getEventHandlers(eventName, options);
-    handlers.forEach((handler) => {
+    const eventHandlers = this.getEventHandlers(eventName, options);
+    eventHandlers.handlers = eventHandlers.nextHandlers;
+    eventHandlers.handlers.forEach((handler) => {
       if (handler) {
         // We need to check for presence here because a handler function may
         // cause later handlers to get removed. This can happen if you for
@@ -36,7 +45,9 @@ export default class TargetEventHandlers {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
 
-    if (eventHandlers.handlers.length === 0) {
+    this.ensureCanMutateNextEventHandlers(eventName, options);
+
+    if (eventHandlers.nextHandlers.length === 0) {
       eventHandlers.handleEvent = this.handleEvent.bind(this, eventName, options);
 
       this.target.addEventListener(
@@ -46,7 +57,7 @@ export default class TargetEventHandlers {
       );
     }
 
-    eventHandlers.handlers.push(listener);
+    eventHandlers.nextHandlers.push(listener);
 
     let isSubscribed = true;
     const unsubscribe = () => {
@@ -56,10 +67,11 @@ export default class TargetEventHandlers {
 
       isSubscribed = false;
 
-      const index = eventHandlers.handlers.indexOf(listener);
-      eventHandlers.handlers.splice(index, 1);
+      this.ensureCanMutateNextEventHandlers(eventName, options);
+      const index = eventHandlers.nextHandlers.indexOf(listener);
+      eventHandlers.nextHandlers.splice(index, 1);
 
-      if (eventHandlers.handlers.length === 0) {
+      if (eventHandlers.nextHandlers.length === 0) {
         // All event handlers have been removed, so we want to remove the event
         // listener from the target node.
 
