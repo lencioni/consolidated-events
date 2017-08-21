@@ -1,5 +1,12 @@
 import eventOptionsKey from './eventOptionsKey';
 
+function ensureCanMutateNextEventHandlers(eventHandlers) {
+  if (eventHandlers.handlers === eventHandlers.nextHandlers) {
+    // eslint-disable-next-line no-param-reassign
+    eventHandlers.nextHandlers = eventHandlers.handlers.slice();
+  }
+}
+
 export default class TargetEventHandlers {
   constructor(target) {
     this.target = target;
@@ -20,13 +27,6 @@ export default class TargetEventHandlers {
     return this.events[key];
   }
 
-  ensureCanMutateNextEventHandlers(eventName, options) {
-    const eventHandlers = this.getEventHandlers(eventName, options);
-    if (eventHandlers.handlers === eventHandlers.nextHandlers) {
-      eventHandlers.nextHandlers = eventHandlers.handlers.slice();
-    }
-  }
-
   handleEvent(eventName, options, event) {
     const eventHandlers = this.getEventHandlers(eventName, options);
     eventHandlers.handlers = eventHandlers.nextHandlers;
@@ -45,7 +45,7 @@ export default class TargetEventHandlers {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
 
-    this.ensureCanMutateNextEventHandlers(eventName, options);
+    ensureCanMutateNextEventHandlers(eventHandlers);
 
     if (eventHandlers.nextHandlers.length === 0) {
       eventHandlers.handleEvent = this.handleEvent.bind(this, eventName, options);
@@ -67,7 +67,7 @@ export default class TargetEventHandlers {
 
       isSubscribed = false;
 
-      this.ensureCanMutateNextEventHandlers(eventName, options);
+      ensureCanMutateNextEventHandlers(eventHandlers);
       const index = eventHandlers.nextHandlers.indexOf(listener);
       eventHandlers.nextHandlers.splice(index, 1);
 
