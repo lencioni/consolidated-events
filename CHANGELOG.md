@@ -1,3 +1,7 @@
+## v1.1.1
+
+- Prevent event handlers from being mutated during current iteration.
+
 ## v1.1.0
 
 - Return an unsubscribe function from `addEventListener` and deprecate
