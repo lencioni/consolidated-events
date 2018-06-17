@@ -3,6 +3,7 @@
   "version": "1.1.1",
   "description": "Manage multiple event handlers using few event listeners",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "scripts": {
     "build": "npm run clean && npm run build:js",
     "build:js": "rollup -c",
