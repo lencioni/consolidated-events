@@ -1,10 +1,9 @@
-import { addEventListener, removeEventListener } from '../src';
+import { addEventListener } from '../src';
 import TargetEventHandlers from '../src/TargetEventHandlers';
 
 class MockTarget {
   constructor() {
     this.addEventListener = jest.fn();
-    this.removeEventListener = jest.fn();
   }
 }
 
@@ -31,34 +30,5 @@ describe('addEventListener()', () => {
     const remove = addEventListener(target, 'scroll', () => {}, { capture: true });
 
     expect(typeof remove).toBe('function');
-  });
-});
-
-describe('removeEventListener()', () => {
-  it('removes event listeners that were previously registered', () => {
-    const target = new MockTarget();
-    const unsubscribe = addEventListener(target, 'scroll', () => {});
-    removeEventListener(unsubscribe);
-
-    expect(target.removeEventListener)
-      .toHaveBeenCalledWith('scroll', jasmine.any(Function), undefined);
-  });
-
-  it('ignores event listeners it does not know about', () => {
-    const target = new MockTarget();
-    addEventListener(target, 'scroll', () => {});
-    removeEventListener(() => {});
-    removeEventListener(() => {});
-
-    expect(target.removeEventListener).toHaveBeenCalledTimes(0);
-  });
-
-  it('normalizes event options', () => {
-    const target = new MockTarget();
-    const unsubscribe = addEventListener(target, 'scroll', () => {}, { capture: true });
-    removeEventListener(unsubscribe);
-
-    expect(target.removeEventListener)
-      .toHaveBeenCalledWith('scroll', jasmine.any(Function), true);
   });
 });
