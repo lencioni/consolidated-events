@@ -14,6 +14,7 @@ function testPassiveEventListeners() {
   let supportsPassiveOption = false;
   try {
     const opts = Object.defineProperty({}, 'passive', {
+      // eslint-disable-next-line getter-return
       get() {
         supportsPassiveOption = true;
       },
