@@ -17,6 +17,9 @@ export default {
     babel({
       babelrc: false,
       presets: [['airbnb', { modules: false }]],
+      plugins: [
+        ['transform-es2015-classes', { loose: true }],
+      ],
     }),
   ],
 };

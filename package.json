@@ -39,6 +39,7 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-jest": "^23.0.1",
+    "babel-plugin-transform-es2015-classes": "^6.24.1",
     "babel-preset-airbnb": "^2.5.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
