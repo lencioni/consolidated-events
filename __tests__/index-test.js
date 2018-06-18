@@ -1,4 +1,4 @@
-import { addEventListener, removeEventListener, EVENT_HANDLERS_KEY } from '../src';
+import { addEventListener, removeEventListener } from '../src';
 import TargetEventHandlers from '../src/TargetEventHandlers';
 
 class MockTarget {
@@ -7,6 +7,8 @@ class MockTarget {
     this.removeEventListener = jest.fn();
   }
 }
+
+const EVENT_HANDLERS_KEY = '__consolidated_events_handlers__';
 
 describe('addEventListener()', () => {
   it('initializes an instance of TargetEventHandlers on new targets', () => {
