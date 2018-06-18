@@ -7,11 +7,13 @@ function ensureCanMutateNextEventHandlers(eventHandlers) {
   }
 }
 
-export default function TargetEventHandlers(target) {
-  this.target = target;
-  this.events = {};
+export default class TargetEventHandlers {
+  constructor(target) {
+    this.target = target;
+    this.events = {};
+  }
 
-  this.getEventHandlers = (eventName, options) => {
+  getEventHandlers(eventName, options) {
     const key = `${eventName} ${eventOptionsKey(options)}`;
 
     if (!this.events[key]) {
@@ -23,9 +25,9 @@ export default function TargetEventHandlers(target) {
     }
 
     return this.events[key];
-  };
+  }
 
-  this.handleEvent = (eventName, options, event) => {
+  handleEvent(eventName, options, event) {
     const eventHandlers = this.getEventHandlers(eventName, options);
     eventHandlers.handlers = eventHandlers.nextHandlers;
     eventHandlers.handlers.forEach((handler) => {
@@ -37,9 +39,9 @@ export default function TargetEventHandlers(target) {
         handler(event);
       }
     });
-  };
+  }
 
-  this.add = (eventName, listener, options) => {
+  add(eventName, listener, options) {
     // options has already been normalized at this point.
     const eventHandlers = this.getEventHandlers(eventName, options);
 
@@ -90,5 +92,5 @@ export default function TargetEventHandlers(target) {
       }
     };
     return unsubscribe;
-  };
+  }
 }
