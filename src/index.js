@@ -1,8 +1,7 @@
 import normalizeEventOptions from './normalizeEventOptions';
 import TargetEventHandlers from './TargetEventHandlers';
 
-// Export to make testing possible.
-export const EVENT_HANDLERS_KEY = '__consolidated_events_handlers__';
+const EVENT_HANDLERS_KEY = '__consolidated_events_handlers__';
 
 export function addEventListener(target, eventName, listener, options) {
   if (!target[EVENT_HANDLERS_KEY]) {
