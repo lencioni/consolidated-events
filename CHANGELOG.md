@@ -1,3 +1,7 @@
+## v2.0.2
+
+- No changes
+
 ## v2.0.1
 
 - Move TargetEventHandlers methods to prototype ([#15](https://github.com/lencioni/consolidated-events/pull/15))
