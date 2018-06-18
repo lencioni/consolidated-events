@@ -1,6 +1,6 @@
 {
   "name": "consolidated-events",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Manage multiple event handlers using few event listeners",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
